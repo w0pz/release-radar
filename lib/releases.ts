@@ -33,7 +33,7 @@ export function img(path: string | null | undefined, size: "w92" | "w185" | "w34
   return path ? `https://image.tmdb.org/t/p/${size}${path}` : null;
 }
 
-/** The movie's page on TMDB, which cards and calendar entries link to. */
+/** The movie's page on TMDB, which cards link to. */
 export function tmdbUrl(id: number) {
   return `https://www.themoviedb.org/movie/${id}`;
 }

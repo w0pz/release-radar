@@ -1,7 +1,7 @@
 # Release Radar
 
-Upcoming theatrical and digital movie releases in the US, UK and Ireland, with a
-calendar showing where each movie comes out. Data from [TMDB](https://www.themoviedb.org).
+Upcoming theatrical and digital movie releases in the US, UK and Ireland, week by
+week, showing where each movie comes out. Data from [TMDB](https://www.themoviedb.org).
 
 The site is fully static. A GitHub Actions workflow rebuilds it every 6 hours with fresh
 TMDB data and publishes it to GitHub Pages, so the TMDB token only lives in a GitHub secret.

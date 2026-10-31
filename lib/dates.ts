@@ -11,14 +11,10 @@ export function addDays(iso: string, days: number) {
   return d.toISOString().slice(0, 10);
 }
 
-export function lastDayOfMonth(month: string) {
-  const [y, m] = month.split("-").map(Number);
-  return new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
-}
-
-export function shiftMonth(month: string, delta: number) {
-  const [y, m] = month.split("-").map(Number);
-  return new Date(Date.UTC(y, m - 1 + delta, 1)).toISOString().slice(0, 7);
+/** The Monday starting the week that contains `iso`. */
+export function weekStart(iso: string) {
+  const day = new Date(`${iso}T00:00:00Z`).getUTCDay();
+  return addDays(iso, -((day + 6) % 7));
 }
 
 // Formatted by hand rather than with toLocaleDateString: Node (at build time) and
@@ -35,8 +31,11 @@ export function formatDate(iso: string, { weekday = false, year = false } = {}) 
   return parts.join(" ");
 }
 
-/** "October 2026" for "2026-10". */
-export function formatMonth(month: string) {
-  const [y, m] = month.split("-").map(Number);
-  return `${MONTHS[m - 1]} ${y}`;
+/** "2 – 8 Nov 2026", "30 Nov – 6 Dec 2026" or "28 Dec 2026 – 3 Jan 2027" for the week starting `start`. */
+export function formatWeek(start: string) {
+  const end = addDays(start, 6);
+  const sameYear = start.slice(0, 4) === end.slice(0, 4);
+  const sameMonth = start.slice(0, 7) === end.slice(0, 7);
+  const from = sameMonth ? String(Number(start.slice(8))) : formatDate(start, { year: !sameYear });
+  return `${from} – ${formatDate(end, { year: true })}`;
 }

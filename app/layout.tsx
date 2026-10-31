@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
-import { NavLinks } from "@/components/NavLinks";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,7 +32,6 @@ export default function RootLayout({
               <span className="grid h-7 w-7 place-items-center rounded-md bg-amber-400 text-sm text-zinc-950">▶</span>
               Release Radar
             </Link>
-            <NavLinks />
             <span className="ml-auto text-xs text-zinc-500">US · UK · Ireland</span>
           </div>
         </header>
