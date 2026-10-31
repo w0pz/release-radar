@@ -18,16 +18,11 @@ export async function UpcomingView({ kind }: { kind: Kind }) {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Coming soon</h1>
-          <p className="mt-1 text-sm text-zinc-400">
-            The most popular {kind === "digital" ? "digital" : "theatrical"} releases in the US, UK and Ireland over the next 4 months.
-          </p>
-        </div>
+        <h1 className="text-3xl font-semibold tracking-tight">Coming Soon</h1>
         <Tabs
           active={kind}
           tabs={[
-            { value: "theatrical", label: "In theaters", href: "/" },
+            { value: "theatrical", label: "Cinemas", href: "/" },
             { value: "digital", label: "Digital", href: "/digital/" },
           ]}
         />
