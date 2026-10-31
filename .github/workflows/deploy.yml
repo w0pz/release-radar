@@ -1,11 +1,11 @@
-# Rebuilds the site with fresh TMDB data every 6 hours and publishes it to GitHub Pages.
+# Rebuilds the site with fresh TMDB data every 12 hours and publishes it to GitHub Pages.
 name: Build and deploy
 
 on:
   push:
     branches: [main]
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 */12 * * *"
   workflow_dispatch:
 
 permissions:
