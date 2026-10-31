@@ -50,7 +50,7 @@ function FilmBlock({ film, day }: { film: FilmShowtimes; day: string }) {
   );
 }
 
-export function TicketsBoard({ films, days }: { films: FilmShowtimes[]; days: string[] }) {
+export function TicketsBoard({ films, days, cinemas }: { films: FilmShowtimes[]; days: string[]; cinemas: string[] }) {
   // Starts on the first day in the data, so the prebuilt page and the browser agree.
   const [day, setDay] = useState(days[0]);
 
@@ -59,6 +59,9 @@ export function TicketsBoard({ films, days }: { films: FilmShowtimes[]; days: st
   const showing = films
     .filter((f) => Object.values(f.cinemas).some((byDay) => byDay[day]?.length))
     .sort((a, b) => sortKey(a.title).localeCompare(sortKey(b.title), "en", { sensitivity: "base" }));
+  // Cinemas publish each Friday-to-Thursday week a few days ahead, so later days are often
+  // missing some cinemas entirely; say so rather than look like missing data.
+  const notYet = cinemas.filter((c) => !showing.some((f) => f.cinemas[c]?.[day]?.length));
 
   return (
     <div>
@@ -81,6 +84,12 @@ export function TicketsBoard({ films, days }: { films: FilmShowtimes[]; days: st
         </div>
       </div>
       <p className="mt-3 text-xs text-zinc-500">{showing.length} films showing · tap a time to book</p>
+      {notYet.length > 0 && (
+        <p className="mt-2 rounded-md border border-white/10 bg-zinc-900 px-3 py-2 text-xs text-zinc-400">
+          No times yet from {notYet.join(", ")}. Cinemas publish each week&apos;s programme a few days ahead, so check back
+          closer to the date.
+        </p>
+      )}
       <div className="divide-y divide-white/10">
         {showing.map((f) => (
           <FilmBlock key={f.id} film={f} day={day} />

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/PageHeader";
 import { TicketsBoard } from "@/components/TicketsBoard";
+import { DUBLIN_CINEMAS } from "@/lib/cinemas";
 import { getDublinShowtimes } from "@/lib/showtimes";
 
 export const metadata: Metadata = { title: "Tickets · Release Radar" };
@@ -11,7 +12,7 @@ export default async function TicketsPage() {
     <div className="space-y-6">
       <PageHeader title="Tickets" active="tickets" />
       {days.length > 0 ? (
-        <TicketsBoard films={films} days={days} />
+        <TicketsBoard films={films} days={days} cinemas={DUBLIN_CINEMAS.map((c) => c.name).filter((n) => !failed.includes(n))} />
       ) : (
         <p className="text-sm text-zinc-400">Showtimes couldn&apos;t be loaded in this update. They&apos;ll be back after the next one.</p>
       )}
