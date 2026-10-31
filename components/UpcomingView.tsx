@@ -1,9 +1,16 @@
 import { CardGrid, MovieCard } from "@/components/MovieCard";
 import { Tabs } from "@/components/Tabs";
 import { getUpcoming } from "@/lib/catalog";
-import { formatWeek, weekStart } from "@/lib/dates";
+import { formatDate, formatWeek, weekStart } from "@/lib/dates";
 import type { Kind } from "@/lib/releases";
 import type { ReleaseItem } from "@/lib/tmdb";
+
+/** Items grouped by their earliest release date, in date order (items arrive sorted). */
+function groupByDay(items: ReleaseItem[]) {
+  const byDay = new Map<string, ReleaseItem[]>();
+  for (const item of items) byDay.set(item.date, [...(byDay.get(item.date) ?? []), item]);
+  return byDay;
+}
 
 export async function UpcomingView({ kind }: { kind: Kind }) {
   const items = await getUpcoming(kind);
@@ -38,11 +45,18 @@ export async function UpcomingView({ kind }: { kind: Kind }) {
             {formatWeek(week)}
             <span className="text-sm font-normal text-zinc-500">{list.length} releases</span>
           </h2>
-          <CardGrid>
-            {list.map((item) => (
-              <MovieCard key={item.movie.id} item={item} />
+          <div className="space-y-5">
+            {[...groupByDay(list)].map(([day, dayItems]) => (
+              <div key={day}>
+                <h3 className="mb-2 text-sm font-medium text-zinc-400">{formatDate(day, { weekday: true })}</h3>
+                <CardGrid>
+                  {dayItems.map((item) => (
+                    <MovieCard key={item.movie.id} item={item} />
+                  ))}
+                </CardGrid>
+              </div>
             ))}
-          </CardGrid>
+          </div>
         </section>
       ))}
 

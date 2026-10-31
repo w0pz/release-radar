@@ -32,7 +32,7 @@ export function MovieCard({ item }: { item: ReleaseItem }) {
       <a href={tmdbUrl(movie.id)} target="_blank" rel="noreferrer" className="block">
         <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-900 ring-1 ring-white/10 transition group-hover:ring-amber-400/60">
           {poster ? (
-            <img src={poster} alt="" loading="lazy" className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]" />
+            <img src={poster} alt="" loading="lazy" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center p-2 text-center text-xs text-zinc-500">{movie.title}</div>
           )}
