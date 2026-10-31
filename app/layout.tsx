@@ -30,13 +30,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
         <header className="sticky top-0 z-20 border-b border-white/10 bg-zinc-950/85 backdrop-blur">
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
-            <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+          <div className="mx-auto flex max-w-7xl items-center gap-x-6 px-4 py-3">
+            <Link href="/" className="flex shrink-0 items-center gap-2 font-semibold tracking-tight">
               <span className="grid h-7 w-7 place-items-center rounded-md bg-amber-400 text-sm text-zinc-950">▶</span>
               Release Radar
             </Link>
             {/* One line only: the sticky week headings sit just below this header. */}
-            <span className="ml-auto whitespace-nowrap text-xs text-zinc-500">
+            <span className="ml-auto min-w-0 truncate text-xs text-zinc-500">
               <span className="hidden sm:inline">US · UK · Ireland · </span>
               Last updated <time dateTime={builtAt.toISOString()}>{formatTimestamp(builtAt)}</time>
             </span>
