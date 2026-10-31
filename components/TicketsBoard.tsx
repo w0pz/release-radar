@@ -54,9 +54,11 @@ export function TicketsBoard({ films, days }: { films: FilmShowtimes[]; days: st
   // Starts on the first day in the data, so the prebuilt page and the browser agree.
   const [day, setDay] = useState(days[0]);
 
-  // Films with the most showings that day first.
-  const count = (f: FilmShowtimes) => Object.values(f.cinemas).reduce((n, byDay) => n + (byDay[day]?.length ?? 0), 0);
-  const showing = films.filter((f) => count(f) > 0).sort((a, b) => count(b) - count(a) || a.title.localeCompare(b.title));
+  // A–Z so any film is easy to find; a leading "The"/"A"/"An" is ignored when sorting.
+  const sortKey = (title: string) => title.replace(/^(the|a|an)\s+/i, "");
+  const showing = films
+    .filter((f) => Object.values(f.cinemas).some((byDay) => byDay[day]?.length))
+    .sort((a, b) => sortKey(a.title).localeCompare(sortKey(b.title), "en", { sensitivity: "base" }));
 
   return (
     <div>
