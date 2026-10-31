@@ -1,4 +1,5 @@
 import { formatDate } from "@/lib/dates";
+import { countryLabel } from "@/lib/countries";
 import { img, tmdbUrl } from "@/lib/releases";
 import type { CountryRelease, ReleaseItem } from "@/lib/tmdb";
 import { CountryTags } from "./CountryTags";
@@ -39,6 +40,18 @@ export function MovieCard({ item }: { item: ReleaseItem }) {
         <h3 className="mt-1.5 line-clamp-2 text-xs font-medium leading-snug group-hover:text-amber-300">{movie.title}</h3>
       </a>
       <ReleaseLines releases={item.releases} color={item.kind === "digital" ? "bg-sky-400" : "bg-amber-400"} />
+      {item.released.length > 0 && (
+        <div
+          className="mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[11px] text-zinc-500"
+          title={item.released.map((r) => `${countryLabel(r.country)}: ${formatDate(r.date, { year: true })}`).join(", ")}
+        >
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-zinc-600" />
+          Already released
+          <span className="ml-auto">
+            <CountryTags countries={item.released.map((r) => r.country)} />
+          </span>
+        </div>
+      )}
     </article>
   );
 }

@@ -79,8 +79,17 @@ type Page<T> = { page: number; results: T[]; total_pages: number; total_results:
 /** When a movie comes out in one country; `limited` for a limited theatrical run. */
 export type CountryRelease = { country: string; date: string; limited: boolean };
 
-/** A movie's releases of one kind, in date order; `date` is the earliest. */
-export type ReleaseItem = { movie: Movie; kind: Kind; date: string; releases: CountryRelease[] };
+/**
+ * A movie's releases of one kind, in date order; `date` is the earliest. `released`
+ * lists countries where it already came out (before `from`) and has no date in range.
+ */
+export type ReleaseItem = {
+  movie: Movie;
+  kind: Kind;
+  date: string;
+  releases: CountryRelease[];
+  released: { country: string; date: string }[];
+};
 
 async function getReleaseDates(id: number) {
   const res = await tmdb<{ results: CountryReleases[] }>(`/movie/${id}/release_dates`);
@@ -112,8 +121,10 @@ export async function getReleasesInRange(opts: {
   from: string;
   to: string;
   maxPages?: number;
+  /** How far back to look for countries where the movie is already out. */
+  releasedSince?: string;
 }): Promise<ReleaseItem[]> {
-  const { kind, from, to, maxPages = 3 } = opts;
+  const { kind, from, to, maxPages = 3, releasedSince = from } = opts;
   const types = KIND_TYPES[kind];
 
   const discover = async (region: string) => {
@@ -146,18 +157,25 @@ export async function getReleasesInRange(opts: {
   const items: ReleaseItem[] = [];
   for (const { movie, results } of withDates) {
     const releases: CountryRelease[] = [];
+    const released: ReleaseItem["released"] = [];
     for (const { code } of COUNTRIES) {
-      const dates = (results.find((c) => c.iso_3166_1 === code)?.release_dates ?? []).filter(
-        (d) => types.includes(d.type) && d.release_date.slice(0, 10) >= from && d.release_date.slice(0, 10) <= to,
-      );
+      const ofKind = (results.find((c) => c.iso_3166_1 === code)?.release_dates ?? []).filter((d) => types.includes(d.type));
+      const dates = ofKind.filter((d) => d.release_date.slice(0, 10) >= from && d.release_date.slice(0, 10) <= to);
       const date = dates.map((d) => d.release_date.slice(0, 10)).sort()[0];
-      if (!date) continue;
-      const onDate = dates.filter((d) => d.release_date.startsWith(date));
-      releases.push({ country: code, date, limited: !onDate.some((d) => d.type === 3) && kind === "theatrical" });
+      if (date) {
+        const onDate = dates.filter((d) => d.release_date.startsWith(date));
+        releases.push({ country: code, date, limited: !onDate.some((d) => d.type === 3) && kind === "theatrical" });
+        continue;
+      }
+      const past = ofKind
+        .map((d) => d.release_date.slice(0, 10))
+        .filter((d) => d >= releasedSince && d < from)
+        .sort()[0];
+      if (past) released.push({ country: code, date: past });
     }
     if (!releases.length) continue;
     releases.sort((a, b) => a.date.localeCompare(b.date));
-    items.push({ movie, kind, date: releases[0].date, releases });
+    items.push({ movie, kind, date: releases[0].date, releases, released });
   }
 
   return items.sort((a, b) => a.date.localeCompare(b.date) || b.movie.popularity - a.movie.popularity);
