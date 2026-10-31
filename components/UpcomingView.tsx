@@ -1,5 +1,5 @@
 import { CardGrid, MovieCard } from "@/components/MovieCard";
-import { Tabs } from "@/components/Tabs";
+import { PageHeader } from "@/components/PageHeader";
 import { getUpcoming } from "@/lib/catalog";
 import { formatWeek, weekStart } from "@/lib/dates";
 import type { Kind } from "@/lib/releases";
@@ -17,16 +17,7 @@ export async function UpcomingView({ kind }: { kind: Kind }) {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <h1 className="text-3xl font-semibold tracking-tight">Coming Soon</h1>
-        <Tabs
-          active={kind}
-          tabs={[
-            { value: "theatrical", label: "Cinemas", href: "/" },
-            { value: "digital", label: "Digital", href: "/digital/" },
-          ]}
-        />
-      </div>
+      <PageHeader title="Coming Soon" active={kind} />
 
       {items.length === 0 && (
         <p className="rounded-lg border border-white/10 bg-zinc-900 p-6 text-sm text-zinc-400">No upcoming {kind} releases are listed yet.</p>
