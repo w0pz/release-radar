@@ -45,8 +45,6 @@ export async function UpcomingView({ kind }: { kind: Kind }) {
           </CardGrid>
         </section>
       ))}
-
-      <p className="text-xs text-zinc-600">Updated {new Date().toUTCString()}</p>
     </div>
   );
 }

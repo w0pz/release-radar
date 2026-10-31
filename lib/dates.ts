@@ -39,3 +39,9 @@ export function formatWeek(start: string) {
   const from = sameMonth ? String(Number(start.slice(8))) : formatDate(start, { year: !sameYear });
   return `${from} – ${formatDate(end, { year: true })}`;
 }
+
+/** "31 Oct, 08:43 UTC" */
+export function formatTimestamp(date: Date) {
+  const iso = date.toISOString();
+  return `${formatDate(iso.slice(0, 10))}, ${iso.slice(11, 16)} UTC`;
+}

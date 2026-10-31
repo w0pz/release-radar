@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import { formatTimestamp } from "@/lib/dates";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,6 +24,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // The site is rebuilt with fresh TMDB data on a schedule, so build time is data time.
+  const builtAt = new Date();
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col antialiased`}>
@@ -32,7 +35,11 @@ export default function RootLayout({
               <span className="grid h-7 w-7 place-items-center rounded-md bg-amber-400 text-sm text-zinc-950">▶</span>
               Release Radar
             </Link>
-            <span className="ml-auto text-xs text-zinc-500">US · UK · Ireland</span>
+            {/* One line only: the sticky week headings sit just below this header. */}
+            <span className="ml-auto whitespace-nowrap text-xs text-zinc-500">
+              <span className="hidden sm:inline">US · UK · Ireland · </span>
+              Last updated <time dateTime={builtAt.toISOString()}>{formatTimestamp(builtAt)}</time>
+            </span>
           </div>
         </header>
         <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-8">{children}</main>
