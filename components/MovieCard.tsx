@@ -60,5 +60,6 @@ export function MovieCard({ item }: { item: ReleaseItem }) {
 }
 
 export function CardGrid({ children }: { children: React.ReactNode }) {
-  return <div className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">{children}</div>;
+  // Desktop shares its width with the week column, hence 6–7 per row rather than 8.
+  return <div className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-7">{children}</div>;
 }

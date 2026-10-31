@@ -31,13 +31,16 @@ export function formatDate(iso: string, { weekday = false, year = false } = {}) 
   return parts.join(" ");
 }
 
-/** "2 – 8 Nov 2026", "30 Nov – 6 Dec 2026" or "28 Dec 2026 – 3 Jan 2027" for the week starting `start`. */
-export function formatWeek(start: string) {
+/**
+ * "2 – 8 Nov 2026", "30 Nov – 6 Dec 2026" or "28 Dec 2026 – 3 Jan 2027" for the week starting
+ * `start`; with `year: false`, "2 – 8 Nov" or "30 Nov – 6 Dec".
+ */
+export function formatWeek(start: string, { year = true } = {}) {
   const end = addDays(start, 6);
   const sameYear = start.slice(0, 4) === end.slice(0, 4);
   const sameMonth = start.slice(0, 7) === end.slice(0, 7);
-  const from = sameMonth ? String(Number(start.slice(8))) : formatDate(start, { year: !sameYear });
-  return `${from} – ${formatDate(end, { year: true })}`;
+  const from = sameMonth ? String(Number(start.slice(8))) : formatDate(start, { year: year && !sameYear });
+  return `${from} – ${formatDate(end, { year })}`;
 }
 
 /** "31 Oct, 08:43 UTC" */
