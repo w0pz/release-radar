@@ -30,12 +30,15 @@ export function MovieCard({ item }: { item: ReleaseItem }) {
   return (
     <article className="group">
       <a href={tmdbUrl(movie.id)} target="_blank" rel="noreferrer" className="block">
-        <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-900 ring-1 ring-white/10 transition group-hover:ring-amber-400/60">
+        {/* Shadows don't show on a black page, so depth comes from light: a brighter edge,
+            a highlight along the top, and a faint glow underneath. */}
+        <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-900 shadow-[0_14px_30px_-14px_rgba(255,255,255,0.28)] ring-1 ring-white/20 transition group-hover:ring-amber-400/70">
           {poster ? (
             <img src={poster} alt="" loading="lazy" className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full items-center justify-center p-2 text-center text-xs text-zinc-500">{movie.title}</div>
           )}
+          <span aria-hidden className="pointer-events-none absolute inset-0 rounded-lg shadow-[inset_0_1px_0_rgba(255,255,255,0.25)]" />
         </div>
         <h3 className="mt-1.5 line-clamp-2 text-xs font-medium leading-snug group-hover:text-amber-300">{movie.title}</h3>
       </a>
