@@ -14,7 +14,7 @@ function ReleaseLines({ releases, color }: { releases: CountryRelease[]; color: 
         <div key={date} className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-[11px] text-zinc-300">
           <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${color}`} />
           <span className="tabular-nums">{formatDate(date)}</span>
-          {list.every((r) => r.limited) && <span className="text-zinc-500">ltd</span>}
+          {list.every((r) => r.limited) && <span className="text-zinc-500">LTD</span>}
           <span className="ml-auto">
             <CountryTags countries={list.map((r) => r.country)} />
           </span>
