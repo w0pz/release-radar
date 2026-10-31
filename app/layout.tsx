@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Release Radar",
   description: "Upcoming theatrical and digital movie releases",
+  // Private site: ask search engines not to index or follow it. (A robots.txt wouldn't
+  // help here, since crawlers only read it at the domain root, w0pz.github.io.)
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({
