@@ -1,39 +1,54 @@
 import { CardGrid, MovieCard } from "@/components/MovieCard";
-import { PageHeader } from "@/components/PageHeader";
-import { getUpcoming } from "@/lib/catalog";
+import { PageHeader, type Section } from "@/components/PageHeader";
 import { addDays, formatWeek, todayISO, weekStart } from "@/lib/dates";
-import type { Kind } from "@/lib/releases";
 import type { ReleaseItem } from "@/lib/tmdb";
 
 type Week = { start: string; id: string; label: string | null; items: ReleaseItem[] };
 
-export async function UpcomingView({ kind }: { kind: Kind }) {
-  const items = await getUpcoming(kind);
-
-  // Weeks run Monday to Sunday; a movie sits in the week of its earliest release.
-  // "This week" is worked out at build time; the site rebuilds just after midnight UTC,
-  // so the label moves on with the new week.
+/**
+ * Releases grouped into Monday-to-Sunday weeks, with a column (a chip row on phones) to jump
+ * between weeks. `recent` lists the newest week first and the most popular films first within
+ * each week; otherwise weeks run soonest first, ordered by date.
+ */
+export function WeeksView({
+  title,
+  active,
+  items,
+  recent = false,
+  empty,
+}: {
+  title: string;
+  active: Section;
+  items: ReleaseItem[];
+  recent?: boolean;
+  empty: string;
+}) {
+  // A movie sits in the week of its earliest release. "This week" is worked out at build
+  // time; the site rebuilds just after midnight UTC, so the label moves on with the new week.
   const thisWeek = weekStart(todayISO());
-  const nextWeek = addDays(thisWeek, 7);
+  const labels: Record<string, string> = {
+    [thisWeek]: "This week",
+    [addDays(thisWeek, recent ? -7 : 7)]: recent ? "Last week" : "Next week",
+  };
   const byWeek = new Map<string, ReleaseItem[]>();
   for (const item of items) {
     const key = weekStart(item.date);
     byWeek.set(key, [...(byWeek.get(key) ?? []), item]);
   }
-  const weeks: Week[] = [...byWeek].map(([start, list]) => ({
-    start,
-    id: `week-${start}`,
-    label: start === thisWeek ? "This week" : start === nextWeek ? "Next week" : null,
-    items: list,
-  }));
+  const weeks: Week[] = [...byWeek]
+    .sort(([a], [b]) => (recent ? b.localeCompare(a) : a.localeCompare(b)))
+    .map(([start, list]) => ({
+      start,
+      id: `week-${start}`,
+      label: labels[start] ?? null,
+      items: recent ? [...list].sort((a, b) => b.movie.popularity - a.movie.popularity) : list,
+    }));
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Coming Soon" active={kind} />
+      <PageHeader title={title} active={active} />
 
-      {items.length === 0 && (
-        <p className="rounded-lg border border-white/10 bg-zinc-900 p-6 text-sm text-zinc-400">No upcoming {kind} releases are listed yet.</p>
-      )}
+      {items.length === 0 && <p className="rounded-lg border border-white/10 bg-zinc-900 p-6 text-sm text-zinc-400">{empty}</p>}
 
       {/* Phones: weeks as a scrollable row of chips. */}
       {weeks.length > 0 && (
@@ -55,7 +70,7 @@ export async function UpcomingView({ kind }: { kind: Kind }) {
               </h2>
               <CardGrid>
                 {w.items.map((item) => (
-                  <MovieCard key={item.movie.id} item={item} />
+                  <MovieCard key={`${item.kind}-${item.movie.id}`} item={item} showKind={recent} />
                 ))}
               </CardGrid>
             </section>

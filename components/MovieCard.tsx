@@ -24,7 +24,8 @@ function ReleaseLines({ releases, color }: { releases: CountryRelease[]; color: 
   );
 }
 
-export function MovieCard({ item }: { item: ReleaseItem }) {
+/** `showKind` labels the card "In cinemas" or "Digital", for lists that mix both. */
+export function MovieCard({ item, showKind = false }: { item: ReleaseItem; showKind?: boolean }) {
   const { movie } = item;
   const poster = img(movie.poster_path, "w185");
   return (
@@ -42,6 +43,11 @@ export function MovieCard({ item }: { item: ReleaseItem }) {
         </div>
         <h3 className="mt-1.5 line-clamp-2 text-xs font-medium leading-snug group-hover:text-amber-300">{movie.title}</h3>
       </a>
+      {showKind && (
+        <p className={`mt-0.5 text-[11px] font-medium ${item.kind === "digital" ? "text-sky-300" : "text-amber-300"}`}>
+          {item.kind === "digital" ? "Digital" : "In cinemas"}
+        </p>
+      )}
       <ReleaseLines releases={item.releases} color={item.kind === "digital" ? "bg-sky-400" : "bg-amber-400"} />
       {item.released.length > 0 && (
         <div

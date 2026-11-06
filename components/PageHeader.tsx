@@ -1,10 +1,11 @@
 import { Tabs } from "./Tabs";
 
-export type Section = "theatrical" | "digital";
+export type Section = "theatrical" | "digital" | "out-now";
 
 const SECTIONS = [
   { value: "theatrical", label: "Cinemas", href: "/" },
   { value: "digital", label: "Digital", href: "/digital/" },
+  { value: "out-now", label: "Out Now", href: "/out-now/" },
 ];
 
 export function PageHeader({ title, active }: { title: string; active: Section }) {

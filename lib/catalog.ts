@@ -1,4 +1,4 @@
-// What the static build generates: the upcoming lists.
+// What the static build generates: the upcoming lists and recent releases.
 import { addDays, todayISO } from "./dates";
 import type { Kind } from "./releases";
 import { getReleasesInRange } from "./tmdb";
@@ -16,4 +16,16 @@ export function getUpcoming(kind: Kind) {
     to: addDays(from, UPCOMING_DAYS),
     releasedSince: addDays(from, -RELEASED_LOOKBACK_DAYS),
   });
+}
+
+// Out Now: what came out recently, so films don't vanish from the site the day they're released.
+const RECENT_DAYS = 30;
+
+/** Cinema and digital releases from the last 30 days up to today. */
+export async function getRecent() {
+  const to = todayISO();
+  const from = addDays(to, -(RECENT_DAYS - 1));
+  const kinds: Kind[] = ["theatrical", "digital"];
+  const lists = await Promise.all(kinds.map((kind) => getReleasesInRange({ kind, from, to })));
+  return lists.flat();
 }
